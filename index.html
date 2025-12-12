@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto Care Hub - Performance Center</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <span style="color: #FF8700;">/</span> AUTO CARE HUB
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link active" href="index.html">HOME</a></li>
+                    
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            SERVICES
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark">
+                            <li><a class="dropdown-item" href="#service-periodic">Periodic Maintenance</a></li>
+                            <li><a class="dropdown-item" href="#service-engine">Engine Repair</a></li>
+                            <li><a class="dropdown-item" href="#service-brake">Brake System</a></li>
+                            <li><a class="dropdown-item" href="#service-tire">Tire & Wheels</a></li>
+                            <li><a class="dropdown-item" href="#service-battery">Battery Service</a></li>
+                            <li><a class="dropdown-item" href="#service-detailing">Pro Detailing</a></li>
+                            <li><hr class="dropdown-divider border-secondary"></li>
+                            <li><a class="dropdown-item" href="#services">View All</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item"><a class="nav-link" href="#contact-footer">CONTACT</a></li>
+
+                    <li class="nav-item">
+                        <button class="btn btn-primary ms-lg-3" data-bs-toggle="modal" data-bs-target="#loginModal">
+                            LOGIN
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="hero-wrapper">
+        <div class="hero-bg" id="heroImage"></div>
+        <div class="hero-overlay"></div>
+
+        <div class="container text-center hero-content">
+            <h1 class="display-1 fw-bold text-white mb-2" style="font-style: italic; letter-spacing: -2px;">PERFORMANCE</h1>
+            <h1 class="display-1 fw-bold text-warning mb-4" style="color: #FF8700 !important; font-style: italic; letter-spacing: -2px;">REDEFINED.</h1>
+            <p class="lead text-secondary mb-5 mx-auto" style="max-width: 600px;">
+                Top-tier maintenance and repair service for your vehicle. Not just a service, but a performance center.
+            </p>
+            
+            <div class="d-flex justify-content-center gap-3">
+                <button class="btn btn-primary btn-lg px-4 px-md-5" data-bs-toggle="modal" data-bs-target="#loginModal">
+                    GET STARTED
+                </button>
+                <a href="#services" class="btn btn-outline-light btn-lg px-4 px-md-5">
+                    VIEW SERVICES
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <section id="services" class="py-5">
+        <div class="container py-4">
+            <div class="text-center mb-5">
+                <h6 class="text-warning fw-bold text-uppercase" style="color: #FF8700 !important; letter-spacing: 2px;">Our Expertise</h6>
+                <h2 class="display-5 fw-bold text-white fst-italic">PREMIUM SERVICE</h2>
+            </div>
+
+            <div class="row g-4 mb-4">
+                <div class="col-md-4" id="service-periodic">
+                    <div class="service-card text-center">
+                        <div class="service-icon-box">
+                            <i class="fa-solid fa-oil-can fa-4x mb-2"></i>
+                        </div>
+                        <h4 class="service-title">PERIODIC MAINTENANCE</h4>
+                        <p class="service-desc">
+                            Manufacturer-approved oil and filter changes that maximize engine life and performance.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4" id="service-engine">
+                    <div class="service-card text-center">
+                        <div class="service-icon-box">
+                            <i class="fa-solid fa-gears fa-4x mb-2"></i>
+                        </div>
+                        <h4 class="service-title">MECHANIC & ENGINE</h4>
+                        <p class="service-desc">
+                            Advanced computerized diagnostics on turbo, transmission, and complete engine blocks.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4" id="service-brake">
+                    <div class="service-card text-center">
+                        <div class="service-icon-box">
+                            <i class="fa-solid fa-shield-halved fa-4x mb-2"></i>
+                        </div>
+                        <h4 class="service-title">BRAKE SYSTEM</h4>
+                        <p class="service-desc">
+                            Ceramic disc and caliper replacement ensuring safe and precise stops at high speeds.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-4" id="service-tire">
+                    <div class="service-card text-center">
+                        <div class="service-icon-box">
+                            <i class="fa-solid fa-dharmachakra fa-4x mb-2"></i>
+                        </div>
+                        <h4 class="service-title">TIRE & WHEELS</h4>
+                        <p class="service-desc">
+                            Professional alignment, balancing, and tire changing services for track and road use.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4" id="service-battery">
+                    <div class="service-card text-center">
+                        <div class="service-icon-box">
+                            <i class="fa-solid fa-car-battery fa-4x mb-2"></i>
+                        </div>
+                        <h4 class="service-title">BATTERY SERVICE</h4>
+                        <p class="service-desc">
+                            High-performance battery replacement and electrical system diagnostics.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4" id="service-detailing">
+                    <div class="service-card text-center">
+                        <div class="service-icon-box">
+                            <i class="fa-solid fa-spray-can-sparkles fa-4x mb-2"></i>
+                        </div>
+                        <h4 class="service-title">PRO DETAILING</h4>
+                        <p class="service-desc">
+                            Interior and exterior detailing, ceramic coating, and paint protection films.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact-footer" class="py-5 mt-5">
+        <div class="container">
+            <div class="row justify-content-center text-center">
+                <div class="col-lg-8">
+                    <h2 class="fw-bold text-white mb-4">CONTACT & SUPPORT</h2>
+                    <p class="text-muted mb-5">
+                        Have questions about our services or need to schedule a custom appointment? <br>
+                        Reach out to us directly.
+                    </p>
+                    
+                    <div class="row g-4 justify-content-center">
+                        <div class="col-md-5">
+                            <div class="p-4 border border-secondary rounded h-100" style="background: #111;">
+                                <div class="contact-icon mb-3">
+                                    <i class="fa-solid fa-phone fa-lg"></i>
+                                </div>
+                                <h5 class="text-white fw-bold">Call Us</h5>
+                                <p class="text-muted small mb-3">Available 09:00 - 18:00</p>
+                                <a href="tel:+905534927199" class="footer-link fw-bold">+90 553 492 7199</a>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="p-4 border border-secondary rounded h-100" style="background: #111;">
+                                <div class="contact-icon mb-3">
+                                    <i class="fa-solid fa-envelope fa-lg"></i>
+                                </div>
+                                <h5 class="text-white fw-bold">Email Us</h5>
+                                <p class="text-muted small mb-3">Kaan Güner</p>
+                                <a href="mailto:guner.kaan@outlook.com" class="footer-link fw-bold">guner.kaan@outlook.com</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-5 pt-4 border-top border-secondary">
+                        <p class="text-muted small mb-0">&copy; 2025 Auto Care Hub. All Rights Reserved.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <div class="modal fade" id="loginModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold text-white">PIT STOP LOGIN</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="loginForm">
+                        <div class="form-floating mb-3">
+                            <input type="email" class="form-control" placeholder="Email" required>
+                            <label>Email</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="password" class="form-control" placeholder="Password" required>
+                            <label>Password</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 py-3 mt-2">LOGIN</button>
+                    </form>
+                    <div class="text-center mt-4">
+                        <small class="text-muted">Don't have an account? <a href="register.html" class="text-warning text-decoration-none fw-bold">Register</a></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100">
+        <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header border-bottom border-secondary" style="background-color: #1f1f1f; color: white;">
+                <i class="fa-solid fa-circle-info me-2" id="toastIcon"></i>
+                <strong class="me-auto" id="toastTitle">System Message</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="toastMessage" style="background-color: #141414; color: #e0e0e0;">
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>

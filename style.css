@@ -1,0 +1,478 @@
+/* FONT IMPORT */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+    /* Theme Color Palette */
+    --bg-body: #050505;          /* Background: Pure Black */
+    --bg-card: #141414;          /* Cards: Dark Anthracite */
+    --bg-input: #1f1f1f;         /* Inputs */
+    
+    --brand-orange: #FF8700;     /* Mclaren Orange */
+    --brand-orange-hover: #e07600;
+    
+    --text-main: #ffffff;        /* Main Text */
+    --text-muted: #a3a3a3;       /* Muted Text */
+    
+    --border-color: #333333;     /* Borders */
+    
+    --card-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    --radius-md: 4px;            /* Sharp/Sporty Corners */
+    --radius-lg: 8px;
+}
+
+/* ENABLE SMOOTH SCROLLING */
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 100px;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-body);
+    color: var(--text-main);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* --- NAVBAR --- */
+.navbar {
+    background-color: rgba(5, 5, 5, 0.95) !important;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-color);
+    padding: 1.2rem 0;
+}
+
+.navbar-brand {
+    font-weight: 800;
+    font-style: italic;
+    letter-spacing: -1px;
+    font-size: 1.6rem;
+    color: white !important;
+}
+
+/* --- BUTTONS --- */
+.btn {
+    border-radius: var(--radius-md);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 0.8rem 1.8rem;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background-color: var(--brand-orange);
+    color: #000000 !important;
+}
+
+.btn-primary:hover {
+    background-color: var(--brand-orange-hover);
+    color: #000000 !important;
+    transform: skewX(-10deg);
+}
+
+.btn-outline-light {
+    border: 2px solid var(--border-color);
+    color: var(--text-muted);
+}
+
+.btn-outline-light:hover {
+    border-color: var(--brand-orange);
+    color: var(--brand-orange);
+    background: transparent;
+}
+
+/* --- CARDS --- */
+.card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--card-shadow);
+}
+
+/* --- FORM ELEMENTS --- */
+.form-control, .form-select {
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
+    color: white;
+    padding: 12px;
+}
+
+.form-control:focus, .form-select:focus {
+    background-color: var(--bg-input);
+    border-color: var(--brand-orange);
+    box-shadow: 0 0 0 4px rgba(255, 135, 0, 0.1);
+    color: white;
+}
+
+.form-control::placeholder { color: #555; }
+.form-floating label { color: var(--text-muted); }
+
+/* --- MODAL --- */
+.modal-content {
+    background-color: var(--bg-card) !important; 
+    border: 1px solid var(--border-color);
+    color: white;
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* --- SERVICES --- */
+#services { background-color: var(--bg-body); }
+
+.service-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 2.5rem 1.5rem;
+    transition: all 0.4s ease;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.service-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--brand-orange);
+    box-shadow: 0 0 30px rgba(255, 135, 0, 0.2);
+}
+
+.service-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 4px; height: 100%;
+    background: var(--brand-orange);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.service-card:hover::before {
+    opacity: 1;
+}
+
+.service-icon-box i { color: var(--brand-orange); }
+.service-title { color: white; font-weight: 700; margin-top: 1.5rem; font-size: 1.25rem; }
+.service-desc { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; }
+
+/* --- HERO SECTION (PARALLAX IMAGE) --- */
+.hero-wrapper {
+    position: relative;
+    height: 85vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 110%; 
+    background: url('https://content-hub.imgix.net/MVslwaifn8TAeDBTd1onY/814ca0190c44708dbe9ba6fc705e79e4/Porsche_911_gt3_rs_driving_track_wallpaper_hero_desktop.jpg?w=2064');
+    background-size: cover;
+    background-position: center;
+    z-index: 1;
+    will-change: transform;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(5,5,5,1));
+    z-index: 2;
+    pointer-events: none;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 3;
+}
+
+/* --- DROPDOWN --- */
+.dropdown-menu {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    margin-top: 10px;
+}
+.dropdown-item { color: var(--text-muted); padding: 10px 20px;}
+.dropdown-item:hover {
+    background-color: rgba(255, 135, 0, 0.1);
+    color: var(--brand-orange);
+}
+.dropdown-item:active {
+    background-color: var(--brand-orange);
+    color: black;
+}
+
+/* --- FOOTER --- */
+footer {
+    background-color: #000000;
+    border-top: 1px solid var(--border-color);
+}
+
+.footer-link {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.3s;
+    font-size: 1.1rem;
+}
+
+.footer-link:hover {
+    color: var(--brand-orange);
+}
+
+.contact-icon {
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 135, 0, 0.1);
+    color: var(--brand-orange);
+    margin-right: 10px;
+}
+
+/* --- MULTI-SELECT SERVICE LIST --- */
+.service-list-group .list-group-item {
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.service-list-group .list-group-item:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: var(--brand-orange);
+}
+
+.service-check-input:checked + .service-info {
+    color: var(--brand-orange);
+}
+
+.service-price-tag {
+    color: var(--brand-orange);
+    font-weight: 600;
+}
+
+/* --- TOAST --- */
+.toast {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+}
+
+.toast-header {
+    background-color: var(--bg-input) !important;
+    color: var(--text-main);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.toast-success-icon { color: #2ecc71; } 
+.toast-error-icon { color: #e74c3c; }
+
+/* =========================================
+   DASHBOARD STYLES (PROFILE & GARAGE)
+   ========================================= */
+
+/* LEFT SIDE: DRIVER PROFILE CARD */
+.profile-card {
+    background: linear-gradient(180deg, #1f1f1f 0%, #141414 100%);
+    border: 1px solid #333;
+    border-radius: 12px;
+    overflow: hidden;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.profile-header-bg {
+    background: solid #333;
+    background-size: cover;
+    background-position: center;
+    height: 80px;
+    opacity: 0.6;
+    border-bottom: 1px solid #2a2a2a;
+}
+
+.profile-name-sexy {
+    font-size: 2.2rem;
+    font-weight: 900;
+    font-style: italic;
+    color: white;
+    margin-top: -40px;
+    margin-bottom: 5px;
+    letter-spacing: -1px;
+    position: relative;
+    z-index: 2;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+.profile-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 20px 0;
+    border-top: 1px solid #2a2a2a;
+    background: rgba(0,0,0,0.2);
+    margin-top: 20px;
+}
+
+.stat-item h5 {
+    color: white;
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 800;
+}
+
+.stat-item small {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.text-date-highlight {
+    color: var(--brand-orange) !important;
+}
+
+/* RIGHT SIDE: WIDE VEHICLE CARDS */
+.vehicle-card-wide {
+    background: #141414;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.vehicle-card-wide:hover {
+    border-color: var(--brand-orange);
+    background: #1a1a1a;
+    transform: translateX(5px);
+}
+
+.vehicle-card-wide::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    background: var(--brand-orange);
+    opacity: 0.5;
+}
+.vehicle-card-wide:hover::before { opacity: 1; }
+
+.v-icon-box {
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    font-size: 1.5rem;
+    margin-right: 20px;
+}
+
+.v-details h4 {
+    margin: 0;
+    font-weight: 700;
+    color: white;
+}
+
+.v-details span {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+}
+
+.v-plate {
+    background: #000;
+    color: white;
+    border: 1px solid #444;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.9rem;
+    letter-spacing: 2px;
+}
+
+/* TIMELINE HISTORY */
+.timeline {
+    position: relative;
+    padding-left: 30px;
+    border-left: 2px solid #333;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.timeline-dot {
+    position: absolute;
+    left: -36px;
+    top: 5px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    border: 2px solid var(--text-muted);
+    transition: all 0.3s;
+}
+
+.timeline-item:hover .timeline-dot {
+    background: var(--brand-orange);
+    border-color: var(--brand-orange);
+    box-shadow: 0 0 10px var(--brand-orange);
+}
+
+.timeline-content {
+    background: #141414;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 15px;
+    transition: all 0.3s;
+}
+
+.timeline-item:hover .timeline-content {
+    border-color: #555;
+    background: #1a1a1a;
+}
+
+.timeline-date {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 5px;
+    display: block;
+}
+
+.status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 6px;
+}
+.status-pending { background-color: #f1c40f; box-shadow: 0 0 8px #f1c40f; }
+.status-success { background-color: #2ecc71; box-shadow: 0 0 8px #2ecc71; }
+
+/* Override Bootstrap Defaults */
+.text-muted { color: #888 !important; }
+.bg-light { background-color: var(--bg-body) !important; }
+.text-dark { color: white !important; }

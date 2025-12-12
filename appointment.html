@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment - Auto Care Hub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-transparent border-0 pt-4 pb-0">
+                        <h4 class="mb-0 fw-bold text-white text-center">SERVICE APPOINTMENT</h4>
+                        <p class="text-center text-muted small">Our expert technicians are waiting for your vehicle.</p>
+                    </div>
+                    <div class="card-body p-4">
+                        <form onsubmit="handleAppointment(event)" novalidate>
+                            
+                            <div class="form-floating mb-3">
+                                <select class="form-select" id="carSelect" required>
+                                    <option value="" selected disabled>Select...</option>
+                                </select>
+                                <label>Vehicle</label>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label text-muted small">SELECT SERVICES</label>
+                                <div class="list-group service-list-group" id="serviceList">
+                                    
+                                    <label class="list-group-item d-flex gap-3 align-items-center">
+                                        <input class="form-check-input flex-shrink-0 service-checkbox" type="checkbox" value="1150" data-name="Periodic Maintenance" style="width: 1.5em; height: 1.5em;">
+                                        <div class="d-flex w-100 justify-content-between align-items-center service-info">
+                                            <div>
+                                                <h6 class="mb-0">Periodic Maintenance</h6>
+                                                <small class="text-muted">Oil, filter change & check-up</small>
+                                            </div>
+                                            <span class="service-price-tag">1150 $</span>
+                                        </div>
+                                    </label>
+
+                                    <label class="list-group-item d-flex gap-3 align-items-center">
+                                        <input class="form-check-input flex-shrink-0 service-checkbox" type="checkbox" value="1200" data-name="Brake System Maint." style="width: 1.5em; height: 1.5em;">
+                                        <div class="d-flex w-100 justify-content-between align-items-center service-info">
+                                            <div>
+                                                <h6 class="mb-0">Brake System</h6>
+                                                <small class="text-muted">Pad & disc check</small>
+                                            </div>
+                                            <span class="service-price-tag">1200 $</span>
+                                        </div>
+                                    </label>
+
+                                    <label class="list-group-item d-flex gap-3 align-items-center">
+                                        <input class="form-check-input flex-shrink-0 service-checkbox" type="checkbox" value="3000" data-name="Detailed Performance Test" style="width: 1.5em; height: 1.5em;">
+                                        <div class="d-flex w-100 justify-content-between align-items-center service-info">
+                                            <div>
+                                                <h6 class="mb-0">Performance Test</h6>
+                                                <small class="text-muted">Detailed dyno & engine test</small>
+                                            </div>
+                                            <span class="service-price-tag">3000 $</span>
+                                        </div>
+                                    </label>
+
+                                    <label class="list-group-item d-flex gap-3 align-items-center">
+                                        <input class="form-check-input flex-shrink-0 service-checkbox" type="checkbox" value="6000" data-name="Tire Change (4 Set)" style="width: 1.5em; height: 1.5em;">
+                                        <div class="d-flex w-100 justify-content-between align-items-center service-info">
+                                            <div>
+                                                <h6 class="mb-0">Tire Change</h6>
+                                                <small class="text-muted">4 tires + balancing</small>
+                                            </div>
+                                            <span class="service-price-tag">6000 $</span>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <input type="date" class="form-control" id="dateInput" required>
+                                <label>Date</label>
+                            </div>
+
+                            <div class="form-floating mb-4">
+                                <textarea class="form-control" placeholder="Note" id="noteInput" style="height: 100px"></textarea>
+                                <label>Note for Technician (Optional)</label>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center mb-4 p-3 border border-secondary rounded" style="background: rgba(255,255,255,0.05);">
+                                <div>
+                                    <small class="text-muted d-block">ESTIMATED COST</small>
+                                    <span class="fw-bold fs-3 text-warning" id="priceDisplay">0 $</span>
+                                </div>
+                                <i class="fa-solid fa-tag fa-2x text-muted"></i>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    CONFIRM
+                                </button>
+                                <a href="dashboard.html" class="btn btn-outline-light">CANCEL</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="successModal" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-center p-5">
+                <div class="modal-body">
+                    <div class="mb-4">
+                        <i class="fa-solid fa-check-circle text-success fa-5x"></i>
+                    </div>
+                    <h3 class="fw-bold text-white">APPOINTMENT CREATED</h3>
+                    <p class="text-muted">Our team has started preparations. You can track it on the dashboard.</p>
+                    <div class="d-grid gap-2 col-8 mx-auto mt-4">
+                        <a href="dashboard.html" class="btn btn-primary">RETURN TO DASHBOARD</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="confirmationModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-secondary" style="background-color: #141414;">
+                <div class="modal-header border-bottom border-secondary">
+                    <h5 class="modal-title fw-bold text-white">
+                        <i class="fa-solid fa-triangle-exclamation text-warning me-2"></i>CONFIRMATION REQUIRED
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center p-4">
+                    <p class="text-white fs-5" id="confirmationMessage">Are you sure you want to proceed?</p>
+                </div>
+                <div class="modal-footer border-top border-secondary justify-content-center">
+                    <button type="button" class="btn btn-outline-light px-4" data-bs-dismiss="modal">CANCEL</button>
+                    <button type="button" class="btn btn-primary px-4" id="confirmActionBtn">YES, CONFIRM</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="noCarsModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-secondary" style="background-color: #141414;">
+                <div class="modal-header border-bottom border-secondary">
+                    <h5 class="modal-title fw-bold text-white">
+                        <i class="fa-solid fa-car-burst text-danger me-2"></i>NO VEHICLE FOUND
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center p-4">
+                    <p class="text-white fs-5">You need to add a vehicle to your garage before making an appointment.</p>
+                    <p class="text-muted small">Please register your vehicle first.</p>
+                </div>
+                <div class="modal-footer border-top border-secondary justify-content-center">
+                    <button type="button" class="btn btn-primary px-4" onclick="redirectToAddVehicle()">
+                        <i class="fa-solid fa-plus me-2"></i>ADD VEHICLE
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100">
+        <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header border-bottom border-secondary" style="background-color: #1f1f1f; color: white;">
+                <i class="fa-solid fa-circle-info me-2" id="toastIcon"></i>
+                <strong class="me-auto" id="toastTitle">System Message</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="toastMessage" style="background-color: #141414; color: #e0e0e0;">
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
