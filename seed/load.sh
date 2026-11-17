@@ -39,6 +39,7 @@ psql_db() { compose exec -T db psql -X -q -v ON_ERROR_STOP=1 -U postgres "$@"; }
 
 started=$(date +%s)
 echo "==> starting db"
+docker network inspect autocare_shared >/dev/null 2>&1 || docker network create autocare_shared >/dev/null
 compose up -d --wait db >/dev/null
 
 echo "==> recreating database $DB"

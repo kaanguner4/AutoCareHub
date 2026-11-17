@@ -6,8 +6,8 @@ which seed/load.sh loads.
 
     seed/.venv/bin/python seed/generate.py
 
-Needs SEED_DEMO_PASSWORD (from the environment or the repo's .env): every seeded web login
-gets the bcrypt hash of that password. Same seed + same password -> byte-identical output.
+Needs SEED_DEMO_PASSWORD (from the environment or the repo's .env): the six demo web logins
+(DEMO_* below) get the bcrypt hash of that password; all other seeded logins cannot sign in. Same seed + same password -> byte-identical output.
 All people, companies, phone numbers, e-mails, plates and tax numbers are synthetic.
 """
 from __future__ import annotations
@@ -74,6 +74,12 @@ OVERDUE_FROM = date(2026, 5, 1)
 BELOW_REORDER_PAIRS = 30                   # (branch, part) pairs whose supplier failed in autumn 2026
 STOCK_BLOCK_FROM = datetime(2026, 9, 20)
 FLEET_DISCOUNT_PCT = 5
+
+# Only these web logins can sign in (bcrypt hash of SEED_DEMO_PASSWORD); every other seeded login gets
+# password_hash NULL. Picked deterministically from the data (no random draws).
+DEMO_CUSTOMERS = (("individual", "IST-KAD"), ("individual", "ANK-CAN"), ("fleet", "IZM-BOR"))
+DEMO_BRANCH_ADMINS = ("IST-KAD", "ANK-CAN")          # the active branch manager of each
+HQ_ADMIN_EMAIL = "hq.admin@autocare-turkiye.example"  # HQ admin: no employee row, sees all branches
 
 # name, starts_on, ends_on, discount %, service category, demand factor while running
 CAMPAIGNS = [
@@ -1145,16 +1151,30 @@ def build_app_users(ctx: Ctx, password: str) -> None:
     salt = "$2b$12$" + "".join(salt_rng.choice(alphabet) for _ in range(21)) + salt_rng.choice(".Oeu")
     pw_hash = bcrypt.hashpw(password.encode(), salt.encode()).decode()
 
-    first_online = {}
+    first_online, visits = {}, defaultdict(int)
     for cust_id, channel, requested in ctx.appt_meta:
+        visits[cust_id] += 1
         if channel in ("web", "fleet_portal") and cust_id not in first_online:
             first_online[cust_id] = requested
+
+    demo_customers = set()
+    for kind, code in DEMO_CUSTOMERS:     # busiest online customer of that type at that branch
+        pool = [c for c in ctx.customers
+                if c["id"] in first_online and c["branch"]["code"] == code and c["fleet"] == (kind == "fleet")
+                and (2 <= len(c["vehicles"]) <= 3 if kind == "individual" else 4 <= len(c["vehicles"]) <= 10)]
+        demo_customers.add(max(pool, key=lambda c: (visits[c["id"]], -c["id"]))["id"])
+    demo_admins = {b["manager_id"] for b in ctx.branches if b["code"] in DEMO_BRANCH_ADMINS}
+    ctx.demo_logins = []
+
     rows = ctx.table("app_users", ["id", "customer_id", "employee_id", "email", "password_hash", "role",
                                    "created_at"])
     for e in ctx.employees:
         if e["role"] in ("manager", "service_advisor") and e["left_on"] is None:
             created = max(at(e["hired_on"], 9), datetime(2023, 1, 2, 9))
-            rows.append((len(rows) + 1, None, e["id"], e["email"], pw_hash, "admin", created))
+            demo = e["id"] in demo_admins
+            rows.append((len(rows) + 1, None, e["id"], e["email"], pw_hash if demo else None, "admin", created))
+            if demo:
+                ctx.demo_logins.append(f"branch admin ({e['branch']['code']}): {e['email']}")
     for c in ctx.customers:
         first = first_online.get(c["id"])
         if first is None:
@@ -1162,7 +1182,13 @@ def build_app_users(ctx: Ctx, password: str) -> None:
         created = max(c["created"], first - timedelta(minutes=R.randint(3, 600)))
         if created > first:
             created = first
-        rows.append((len(rows) + 1, c["id"], None, c["email"], pw_hash, "customer", created))
+        demo = c["id"] in demo_customers
+        rows.append((len(rows) + 1, c["id"], None, c["email"], pw_hash if demo else None, "customer", created))
+        if demo:
+            kind = "fleet" if c["fleet"] else "individual"
+            ctx.demo_logins.append(f"customer ({kind}, {c['branch']['code']}): {c['email']}")
+    rows.append((len(rows) + 1, None, None, HQ_ADMIN_EMAIL, pw_hash, "admin", datetime(2023, 1, 2, 9)))
+    ctx.demo_logins.append(f"HQ admin (all branches): {HQ_ADMIN_EMAIL}")
 
 
 # ======================================================================= inventory & purchasing
@@ -1393,6 +1419,9 @@ def main() -> None:
     for name in LOAD_ORDER:
         print(f"{name:22s} {len(ctx.tables[name][1]):>9,d}")
     print(f"stock pairs below reorder point: {ctx.below_reorder} (engineered: {len(ctx.blocked)})")
+    print("demo logins (password = SEED_DEMO_PASSWORD):")
+    for line in ctx.demo_logins:
+        print(f"  {line}")
     print(f"generated in {time.monotonic() - started:.1f} s -> {OUT_DIR}")
 
 
