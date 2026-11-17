@@ -1,0 +1,36 @@
+# AutoCare Türkiye (AutoCareHub v2). The database is reachable only inside the compose network
+# (no published port). Load data with: seed/load.sh --yes
+name: autocarehub
+
+services:
+  db:
+    # postgres:16 (16.16), multi-arch index digest
+    image: postgres:16@sha256:dd2bf3ce2dc83a81674cf7f217fcfd8a5009a4b325dda5b843bfee82a06cff6f
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      TZ: Europe/Istanbul
+      PGTZ: Europe/Istanbul
+    command:
+      - postgres
+      - -c
+      - shared_buffers=512MB
+      - -c
+      - maintenance_work_mem=256MB
+      - -c
+      - max_wal_size=2GB
+      - -c
+      - timezone=Europe/Istanbul
+    shm_size: 256mb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+volumes:
+  pgdata:
