@@ -112,6 +112,10 @@ body {
 
 .form-control::placeholder { color: #555; }
 .form-floating label { color: var(--text-muted); }
+/* Bootstrap 5.3 paints a patch behind a floated label with --bs-body-bg (white in the light theme):
+   use the input colour instead, and render native pickers/pop-ups (date, select) dark. */
+.form-floating > label::after { background-color: var(--bg-input) !important; }
+.form-control, .form-select { color-scheme: dark; }
 
 /* --- MODAL --- */
 .modal-content {
