@@ -1043,6 +1043,59 @@ def make_work_order(ctx: Ctx, b: dict, v: dict, appt_id: int | None, opened: dat
         ctx.done_work_orders.append((wo_id, b, c, closed, sum(lines), duration / slow, slow))
 
 
+# ======================================================================= appointment services
+APPT_SERVICES_SEED = SEED + 4       # ACH-4: its own stream, so no other table moves when this one changes
+APPT_SERVICE_COUNT_WEIGHTS = (60, 30, 10)     # 1, 2 or 3 requested services
+
+
+def build_appointment_services(ctx: Ctx) -> None:
+    """Services of every seeded appointment, drawn from a private random stream (never touches R).
+
+    - appointment with a work order that has labor lines: exactly those services;
+    - every other appointment (pending, confirmed, cancelled, no_show, and the rare work order cancelled
+      at the counter, which has no lines): 1-3 services drawn from the seasonal / campaign mix of its
+      branch city on its scheduled date, like a customer booking for that day;
+    - list_price_try = the service_prices row valid on the scheduled date (same rule as a web booking).
+    """
+    rng = random.Random(APPT_SERVICES_SEED)
+    rows = ctx.table("appointment_services", ["appointment_id", "service_id", "list_price_try"])
+    appts = ctx.tables["appointments"][1]
+    wo_appt = {w[0]: w[1] for w in ctx.tables["work_orders"][1] if w[1] is not None}
+    labor: dict[int, list[int]] = defaultdict(list)
+    for it in ctx.tables["work_order_items"][1]:
+        if it[2] == "labor" and it[1] in wo_appt and it[3] not in labor[wo_appt[it[1]]]:
+            labor[wo_appt[it[1]]].append(it[3])
+    prices: dict[int, list[tuple]] = defaultdict(list)
+    for service_id, valid_from, valid_to, price in ctx.tables["service_prices"][1]:
+        prices[service_id].append((valid_from, valid_to, price))
+    city_of = {b["id"]: b["city"] for b in ctx.branches}
+    addon_svcs, addon_cum = ctx.addon
+
+    def list_price(service_id: int, d: date) -> str:
+        for valid_from, valid_to, price in prices[service_id]:
+            if valid_from <= d and (valid_to is None or d <= valid_to):
+                return price
+        raise AssertionError(f"no list price for service {service_id} on {d}")
+
+    def draw(cum: list[float]) -> int:
+        return bisect.bisect_right(cum, rng.random() * cum[-1])
+
+    for appt in appts:
+        appt_id, branch_id, d = appt[0], appt[3], appt[5].date()
+        service_ids = labor.get(appt_id)
+        if not service_ids:
+            svcs, cum, _ = service_mix(ctx, city_of[branch_id], d)
+            n = rng.choices((1, 2, 3), APPT_SERVICE_COUNT_WEIGHTS)[0]
+            chosen = [svcs[draw(cum)]]
+            for _ in range(n - 1):
+                extra = addon_svcs[draw(addon_cum)]
+                if extra not in chosen and extra in svcs:
+                    chosen.append(extra)
+            service_ids = [s["id"] for s in chosen]
+        for service_id in service_ids:
+            rows.append((appt_id, service_id, list_price(service_id, d)))
+
+
 # ======================================================================= invoices & payments
 def build_billing(ctx: Ctx) -> None:
     invoices = ctx.table("invoices", ["id", "work_order_id", "customer_id", "branch_id", "issued_at", "due_on",
@@ -1365,7 +1418,7 @@ def copy_value(v) -> str:
 LOAD_ORDER = ["branches", "employees", "customers", "app_users", "vehicles", "service_catalog", "service_prices",
               "parts", "suppliers", "part_suppliers", "campaigns", "appointments", "work_orders",
               "work_order_items", "invoices", "payments", "purchase_orders", "purchase_order_lines",
-              "stock_levels", "stock_movements", "reviews"]
+              "stock_levels", "stock_movements", "reviews", "appointment_services"]
 
 
 def write_output(ctx: Ctx) -> None:
@@ -1415,6 +1468,7 @@ def main() -> None:
     build_reviews(ctx)
     build_app_users(ctx, password)
     build_inventory(ctx)
+    build_appointment_services(ctx)
     write_output(ctx)
     for name in LOAD_ORDER:
         print(f"{name:22s} {len(ctx.tables[name][1]):>9,d}")

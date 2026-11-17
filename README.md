@@ -112,7 +112,7 @@ seed/load.sh --yes                          # drops and recreates ONLY the datab
 schema, loads all COPY files in one transaction, resets the identity sequences, applies the roles and runs
 `VACUUM (ANALYZE)`. Without `--yes` it does nothing. Only the six demo logins (see above) get the bcrypt hash
 of `SEED_DEMO_PASSWORD`; every other seeded web login has `password_hash` NULL and cannot sign in.
-`appointment_services` holds the services chosen in web bookings; it is empty for the seeded appointments.
+`appointment_services` holds the services of every appointment: chosen in web bookings, and for seeded appointments the labor services of the work order or, for pending, confirmed, cancelled and no-show ones, 1-3 seasonal services at the list price of the scheduled date.
 
 The database has no published port. To query it from the host:
 
