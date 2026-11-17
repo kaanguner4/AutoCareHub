@@ -413,7 +413,7 @@ COMMENT ON COLUMN appointments.channel IS 'Booking channel: web, phone, walk_in 
 COMMENT ON COLUMN appointments.status IS 'pending, confirmed, completed (vehicle came and a work order was opened), cancelled or no_show.';
 COMMENT ON COLUMN appointments.note IS 'Free-text note from the customer, in Turkish.';
 
-COMMENT ON TABLE appointment_services IS 'Services a customer selected when booking an appointment on the website (empty for bookings made by phone or at the counter).';
+COMMENT ON TABLE appointment_services IS 'Services booked with an appointment: the services selected on the website, or for other channels the services of the visit (its work order labor lines when there is one). One row per appointment and service.';
 COMMENT ON COLUMN appointment_services.appointment_id IS 'Appointment (appointments.id).';
 COMMENT ON COLUMN appointment_services.service_id IS 'Requested service (service_catalog.id).';
 COMMENT ON COLUMN appointment_services.list_price_try IS 'List price of the service in Turkish lira, excluding VAT, at booking time (estimate shown to the customer).';
