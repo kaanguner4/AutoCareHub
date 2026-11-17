@@ -137,3 +137,10 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# AutoCareHub v2
+.env
+!.env.example
+seed/out/
+seed/.venv/
+node_modules/
