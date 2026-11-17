@@ -195,6 +195,30 @@ test('booking: customer creates a pending web appointment; only the right branch
   assert.equal(closed.status, 400);
 });
 
+test('out-of-scope status changes are 404 whatever the requested status (no existence leak)', async () => {
+  const can = await signIn(demo.adminCankaya);
+  const a = await signIn(demo.customerA);
+  const me = (await can.get('/api/me')).body.user;
+  const { rows: [other] } = await pool.query(
+    "SELECT id FROM appointments WHERE branch_id <> $1 AND status = 'completed' ORDER BY id LIMIT 1", [me.branch.id]);
+  const { rows: [missing] } = await pool.query('SELECT max(id) + 1000 AS id FROM appointments');
+  for (const status of ['confirmed', 'completed', 'not-a-status', '', null, 42]) {
+    const foreign = await can.put(`/api/appointments/${other.id}/status`, { status });
+    const absent = await can.put(`/api/appointments/${missing.id}/status`, { status });
+    assert.equal(foreign.status, 404, `branch admin, foreign appointment, status ${JSON.stringify(status)}`);
+    assert.deepEqual(foreign.body, absent.body, 'foreign and non-existent ids answer identically');
+  }
+  const bAppt = (await (await signIn(demo.customerB)).get('/api/appointments?view=all&limit=1')).body[0].id;
+  for (const status of ['confirmed', 'completed', 'cancelled', 'bogus']) {
+    assert.equal((await a.put(`/api/appointments/${bAppt}/status`, { status })).status, 404, `customer, foreign, ${status}`);
+  }
+  // In scope, the order is: unknown status -> 400, wrong transition -> 409.
+  const { rows: [own] } = await pool.query(
+    "SELECT id FROM appointments WHERE branch_id = $1 AND status = 'completed' ORDER BY id LIMIT 1", [me.branch.id]);
+  assert.equal((await can.put(`/api/appointments/${own.id}/status`, { status: 'bogus' })).status, 400);
+  assert.equal((await can.put(`/api/appointments/${own.id}/status`, { status: 'confirmed' })).status, 409);
+});
+
 test('branch admin sees only the own branch', async () => {
   const kad = await signIn(demo.adminKadikoy);
   const me = (await kad.get('/api/me')).body.user;

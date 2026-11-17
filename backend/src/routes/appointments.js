@@ -176,26 +176,30 @@ module.exports = function appointmentRoutes(pool) {
   });
 
   // Customers may cancel their own upcoming appointments; staff move appointments of their scope along.
+  // Order matters: anything outside the caller's scope is 404 before the requested status is even looked at,
+  // so the answer never reveals whether someone else's appointment exists.
   router.put('/appointments/:id/status', requireAuth, async (req, res) => {
     const aid = id(req.params.id);
     if (!aid) throw notFound();
     const isCustomer = req.user.role === 'customer';
     const transitions = isCustomer ? CUSTOMER_TRANSITIONS : STAFF_TRANSITIONS;
     const status = req.body?.status;
-    if (typeof status !== 'string' || !Object.hasOwn(transitions, status)) {
-      throw badRequest('This status change is not allowed.');
-    }
-    const params = [aid, status, transitions[status]];
-    const where = [`a.id = $1`, scope(req.user, params), 'a.status = ANY($3::text[])'];
-    if (isCustomer) where.push('a.scheduled_for > now()');
-    const { rowCount } = await pool.query(
-      `UPDATE appointments a SET status = $2 WHERE ${where.join(' AND ')}`, params);
-    if (rowCount === 0) {
-      const check = [aid];
-      const { rows } = await pool.query(`SELECT 1 FROM appointments a WHERE a.id = $1 AND ${scope(req.user, check)}`, check);
-      if (!rows[0]) throw notFound();
-      throw conflict(isCustomer ? 'This appointment can no longer be cancelled.' : 'This status change is not allowed.');
-    }
+
+    await withTransaction(pool, async (client) => {
+      const params = [aid];
+      const { rows } = await client.query(
+        `SELECT a.status, a.scheduled_for > now() AS upcoming FROM appointments a
+         WHERE a.id = $1 AND ${scope(req.user, params)} FOR UPDATE`, params);
+      const current = rows[0];
+      if (!current) throw notFound();
+      if (typeof status !== 'string' || !Object.hasOwn(transitions, status)) {
+        throw badRequest('This status change is not allowed.');
+      }
+      if (!transitions[status].includes(current.status) || (isCustomer && !current.upcoming)) {
+        throw conflict(isCustomer ? 'This appointment can no longer be cancelled.' : 'This status change is not allowed.');
+      }
+      await client.query('UPDATE appointments SET status = $2 WHERE id = $1', [aid, status]);
+    });
     res.json({ id: aid, status });
   });
 
