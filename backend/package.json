@@ -12,7 +12,10 @@
     "test": "node --test test/"
   },
   "dependencies": {
+    "@fontsource/poppins": "5.3.0",
+    "@fortawesome/fontawesome-free": "6.4.0",
     "bcryptjs": "3.0.3",
+    "bootstrap": "5.3.0",
     "cookie-parser": "1.4.7",
     "cors": "2.8.6",
     "express": "5.3.0",

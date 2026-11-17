@@ -98,6 +98,8 @@ services:
       - ./main.js:/site/main.js:ro
       - ./admin.js:/site/admin.js:ro
       - ./style.css:/site/style.css:ro
+      - ./admin.css:/site/admin.css:ro
+      - ./hero.svg:/site/hero.svg:ro
     command: ["sh", "-c", "npm ci --no-audit --no-fund --loglevel=error && node --test --test-reporter=spec test/"]
     depends_on:
       db:

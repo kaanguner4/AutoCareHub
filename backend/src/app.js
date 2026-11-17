@@ -1,4 +1,5 @@
 'use strict';
+const fs = require('node:fs');
 const path = require('node:path');
 const express = require('express');
 const helmet = require('helmet');
@@ -15,7 +16,18 @@ const adminRoutes = require('./routes/admin');
 
 // The only files the web server hands out (the repo root also holds .env, seed data, ...).
 const PUBLIC_FILES = ['index.html', 'register.html', 'dashboard.html', 'appointment.html', 'admin.html',
-  'main.js', 'admin.js', 'style.css'];
+  'main.js', 'admin.js', 'style.css', 'admin.css', 'hero.svg'];
+
+// Third-party front-end files, served from the pinned npm packages (no CDN): URL prefix -> package folder.
+const NODE_MODULES = path.join(__dirname, '..', 'node_modules');
+// Only asset file types are served (no package.json, README, sources).
+const VENDOR_ASSET = /\.(css|js|map|woff2?|ttf)$/;
+const VENDOR = {
+  '/vendor/bootstrap': 'bootstrap/dist',                                    // MIT
+  '/vendor/fontawesome/css': '@fortawesome/fontawesome-free/css',           // MIT (code)
+  '/vendor/fontawesome/webfonts': '@fortawesome/fontawesome-free/webfonts', // OFL-1.1 (fonts), CC BY 4.0 (icons)
+  '/vendor/poppins': '@fontsource/poppins',                                 // OFL-1.1
+};
 
 const GENERIC_ERROR = 'Something went wrong. Please try again.';
 
@@ -34,12 +46,11 @@ function createApp(config, pool, options = {}) {
       useDefaults: true,
       directives: {
         'default-src': ["'self'"],
-        'script-src': ["'self'", 'https://cdn.jsdelivr.net'],
+        'script-src': ["'self'"],
         'script-src-attr': ["'none'"],
-        'style-src': ["'self'", "'unsafe-inline'", 'https://cdn.jsdelivr.net', 'https://cdnjs.cloudflare.com',
-          'https://fonts.googleapis.com'],
-        'font-src': ["'self'", 'data:', 'https://cdnjs.cloudflare.com', 'https://fonts.gstatic.com'],
-        'img-src': ["'self'", 'data:', 'https://content-hub.imgix.net'],
+        'style-src': ["'self'"],
+        'font-src': ["'self'"],
+        'img-src': ["'self'", 'data:'],   // data: for Bootstrap's built-in SVG icons
         'connect-src': ["'self'"],
         'object-src': ["'none'"],
         'base-uri': ["'self'"],
@@ -85,6 +96,12 @@ function createApp(config, pool, options = {}) {
       if (err && !res.headersSent) next(err.code === 'ENOENT' ? new HttpError(404, 'Not found.') : err);
     });
   };
+  for (const [prefix, dir] of Object.entries(VENDOR)) {
+    const full = path.join(NODE_MODULES, dir);
+    if (!fs.existsSync(full)) throw new Error(`Missing front-end package folder ${dir}; run npm ci`);
+    const serve = express.static(full, { index: false, dotfiles: 'ignore', maxAge: '7d', redirect: false });
+    app.use(prefix, (req, res, next) => (VENDOR_ASSET.test(req.path) ? serve(req, res, next) : next()));
+  }
   app.get('/', sendPage('index.html'));
   for (const name of PUBLIC_FILES) app.get(`/${name}`, sendPage(name));
 

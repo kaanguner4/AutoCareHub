@@ -259,13 +259,33 @@ test('only the page files are served; security headers are set', async () => {
   const page = await request(app).get('/');
   assert.equal(page.status, 200);
   assert.match(page.headers['content-type'], /html/);
-  assert.match(page.headers['content-security-policy'], /script-src 'self' https:\/\/cdn\.jsdelivr\.net/);
-  assert.match(page.headers['content-security-policy'], /frame-ancestors 'none'/);
+  const csp = page.headers['content-security-policy'];
+  for (const d of ["default-src 'self'", "script-src 'self'", "style-src 'self'", "font-src 'self'",
+    "img-src 'self' data:", "connect-src 'self'", "script-src-attr 'none'", "frame-ancestors 'none'"]) {
+    assert.ok(csp.split(';').map((x) => x.trim()).includes(d), `CSP has ${d}`);
+  }
+  assert.doesNotMatch(csp, /https?:|unsafe-inline|unsafe-eval/, 'no external hosts or unsafe keywords in the CSP');
   assert.equal(page.headers['x-powered-by'], undefined);
-  for (const path of ['/.env', '/backend/src/config.js', '/seed/out/manifest.tsv', '/../.env', '/docker-compose.yml']) {
+  for (const path of ['/.env', '/backend/src/config.js', '/seed/out/manifest.tsv', '/../.env', '/docker-compose.yml',
+    '/vendor/poppins/package.json', '/vendor/bootstrap/../package.json', '/vendor/poppins/README.md']) {
     assert.equal((await request(app).get(path)).status, 404, path);
   }
   assert.equal((await request(app).get('/main.js')).status, 200);
+  for (const [path, type] of [
+    ['/vendor/bootstrap/css/bootstrap.min.css', /css/], ['/vendor/bootstrap/js/bootstrap.bundle.min.js', /javascript/],
+    ['/vendor/fontawesome/css/all.min.css', /css/], ['/vendor/fontawesome/webfonts/fa-solid-900.woff2', /font|octet/],
+    ['/vendor/poppins/400.css', /css/], ['/vendor/poppins/files/poppins-latin-ext-600-normal.woff2', /font|octet/],
+    ['/hero.svg', /svg/], ['/admin.css', /css/]]) {
+    const res = await request(app).get(path);
+    assert.equal(res.status, 200, path);
+    assert.match(res.headers['content-type'], type, path);
+  }
+  // Pages and the stylesheet reference nothing outside the own origin (and no inline style/script attributes).
+  for (const name of ['index.html', 'register.html', 'dashboard.html', 'appointment.html', 'admin.html', 'style.css', 'main.js', 'admin.js']) {
+    const body = (await request(app).get(`/${name}`)).text;
+    assert.doesNotMatch(body, /(src|href)="https?:|url\(['"]?https?:|@import url\(['"]?https?:/, `${name}: no external assets`);
+    assert.doesNotMatch(body, /\sstyle="|<style|\son[a-z]+="/, `${name}: no inline style/handlers`);
+  }
 });
 
 test('error bodies carry no SQL or internals', async () => {
