@@ -166,7 +166,7 @@ async function renderUserDashboard() {
         if (myVehicles.length === 0) {
             vContainer.innerHTML = `
                 <div class="col-12">
-                    <div class="empty-state-box text-center p-5 border border-secondary rounded" style="background: #111;">
+                    <div class="u-bg-111 empty-state-box text-center p-5 border border-secondary rounded">
                         <i class="fa-solid fa-car-tunnel text-muted fa-3x mb-3"></i>
                         <h5 class="fw-bold text-white">Garage Empty</h5>
                         <button class="btn btn-outline-primary mt-3" data-bs-toggle="modal" data-bs-target="#addVehicleModal">
@@ -211,7 +211,7 @@ function renderAppointmentTimeline(appointments) {
         const carName = `${app.vehicle.brand} ${app.vehicle.model} (${app.vehicle.plate}) · ${app.branch.name}`;
         const serviceName = app.services || 'Service appointment';
         const canCancel = isOpen && new Date(app.scheduled_for) > now;
-        const actionBtn = canCancel ? `<button class="btn btn-sm btn-outline-danger ms-auto" style="font-size: 0.7rem;" data-action="cancel-appointment" data-id="${esc(app.id)}">CANCEL</button>` : '';
+        const actionBtn = canCancel ? `<button class="u-fs-07 btn btn-sm btn-outline-danger ms-auto" data-action="cancel-appointment" data-id="${esc(app.id)}">CANCEL</button>` : '';
 
         html += `
         <div class="timeline-item">
@@ -315,7 +315,7 @@ async function renderServiceList() {
     try { services = await API.getServices(); } catch (err) { showNotification("Could not load the services.", "error"); return; }
     list.innerHTML = services.map(s => `
         <label class="list-group-item d-flex gap-3 align-items-center">
-            <input class="form-check-input flex-shrink-0 service-checkbox" type="checkbox" value="${esc(s.id)}" data-price="${esc(s.list_price_try)}" style="width: 1.5em; height: 1.5em;">
+            <input class="u-check-lg form-check-input flex-shrink-0 service-checkbox" type="checkbox" value="${esc(s.id)}" data-price="${esc(s.list_price_try)}">
             <div class="d-flex w-100 justify-content-between align-items-center service-info">
                 <div>
                     <h6 class="mb-0">${esc(s.name)}</h6>

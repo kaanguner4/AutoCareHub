@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Auto Care Hub - Performance Center</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>AutoCare Türkiye - Performance Center</title>
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="vendor/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -13,7 +13,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
         <div class="container">
             <a class="navbar-brand" href="index.html">
-                <span style="color: #FF8700;">/</span> AUTO CARE HUB
+                <span class="u-orange">/</span> AUTOCARE TÜRKİYE
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -55,9 +55,9 @@
         <div class="hero-overlay"></div>
 
         <div class="container text-center hero-content">
-            <h1 class="display-1 fw-bold text-white mb-2" style="font-style: italic; letter-spacing: -2px;">PERFORMANCE</h1>
-            <h1 class="display-1 fw-bold text-warning mb-4" style="color: #FF8700 !important; font-style: italic; letter-spacing: -2px;">REDEFINED.</h1>
-            <p class="lead text-secondary mb-5 mx-auto" style="max-width: 600px;">
+            <h1 class="u-hero-title display-1 fw-bold text-white mb-2">PERFORMANCE</h1>
+            <h1 class="u-orange u-hero-title display-1 fw-bold text-warning mb-4">REDEFINED.</h1>
+            <p class="u-maxw-600 lead text-secondary mb-5 mx-auto">
                 Top-tier maintenance and repair service for your vehicle. Not just a service, but a performance center.
             </p>
             
@@ -75,7 +75,7 @@
     <section id="services" class="py-5">
         <div class="container py-4">
             <div class="text-center mb-5">
-                <h6 class="text-warning fw-bold text-uppercase" style="color: #FF8700 !important; letter-spacing: 2px;">Our Expertise</h6>
+                <h6 class="u-orange u-ls-wide text-warning fw-bold text-uppercase">Our Expertise</h6>
                 <h2 class="display-5 fw-bold text-white fst-italic">PREMIUM SERVICE</h2>
             </div>
 
@@ -165,29 +165,30 @@
                     
                     <div class="row g-4 justify-content-center">
                         <div class="col-md-5">
-                            <div class="p-4 border border-secondary rounded h-100" style="background: #111;">
+                            <div class="u-bg-111 p-4 border border-secondary rounded h-100">
                                 <div class="contact-icon mb-3">
                                     <i class="fa-solid fa-phone fa-lg"></i>
                                 </div>
                                 <h5 class="text-white fw-bold">Call Us</h5>
                                 <p class="text-muted small mb-3">Available 09:00 - 18:00</p>
-                                <a href="tel:+905534927199" class="footer-link fw-bold">+90 553 492 7199</a>
+                                <a href="tel:+908500000000" class="footer-link fw-bold">0850 000 00 00</a>
                             </div>
                         </div>
                         <div class="col-md-5">
-                            <div class="p-4 border border-secondary rounded h-100" style="background: #111;">
+                            <div class="u-bg-111 p-4 border border-secondary rounded h-100">
                                 <div class="contact-icon mb-3">
                                     <i class="fa-solid fa-envelope fa-lg"></i>
                                 </div>
                                 <h5 class="text-white fw-bold">Email Us</h5>
-                                <p class="text-muted small mb-3">Kaan Güner</p>
-                                <a href="mailto:guner.kaan@outlook.com" class="footer-link fw-bold">guner.kaan@outlook.com</a>
+                                <p class="text-muted small mb-3">Customer Service</p>
+                                <a href="mailto:iletisim@autocare-turkiye.example" class="footer-link fw-bold">iletisim@autocare-turkiye.example</a>
                             </div>
                         </div>
                     </div>
 
                     <div class="mt-5 pt-4 border-top border-secondary">
-                        <p class="text-muted small mb-0">&copy; 2025 Auto Care Hub. All Rights Reserved.</p>
+                        <p class="text-muted small mb-2">Head office: Örnek Mahallesi, Servis Caddesi No: 1, 34000 İstanbul</p>
+                        <p class="text-muted small mb-0">&copy; 2026 AutoCare Türkiye. All Rights Reserved.</p>
                     </div>
                 </div>
             </div>
@@ -221,19 +222,19 @@
         </div>
     </div>
 
-    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100">
+    <div class="u-z-toast toast-container position-fixed top-0 end-0 p-3">
         <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header border-bottom border-secondary" style="background-color: #1f1f1f; color: white;">
+            <div class="u-toast-head toast-header border-bottom border-secondary">
                 <i class="fa-solid fa-circle-info me-2" id="toastIcon"></i>
                 <strong class="me-auto" id="toastTitle">System Message</strong>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
             </div>
-            <div class="toast-body" id="toastMessage" style="background-color: #141414; color: #e0e0e0;">
+            <div class="u-toast-body toast-body" id="toastMessage">
             </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="main.js"></script>
 </body>
 </html>

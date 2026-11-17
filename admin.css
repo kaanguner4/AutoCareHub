@@ -1,0 +1,48 @@
+/* Admin console (was an inline <style> block; moved out for the strict CSP) */
+body {
+    background-color: #050505;
+}
+
+.stat-card {
+    background-color: #141414;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+/* Tablo Tasarımı */
+.table-custom {
+    background-color: #141414;
+    color: #b0b0b0;
+}
+
+.table-custom th {
+    color: var(--brand-orange);
+    border-bottom: 2px solid #444;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    background-color: #1a1a1a;
+}
+
+.table-custom td {
+    border-bottom: 1px solid #333;
+    vertical-align: middle;
+    background-color: #141414;
+}
+
+/* Müşteri İsmi İçin Özel Stil */
+.customer-name-highlight {
+    color: #ffffff !important;
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.badge-status { 
+    font-size: 0.75rem; 
+    padding: 6px 12px; 
+    letter-spacing: 0.5px;
+    border-radius: 4px;
+}
