@@ -19,7 +19,7 @@
                         <p class="text-center text-muted small">Our expert technicians are waiting for your vehicle.</p>
                     </div>
                     <div class="card-body p-4">
-                        <form onsubmit="handleAppointment(event)" novalidate>
+                        <form id="appointmentForm" novalidate>
                             
                             <div class="form-floating mb-3">
                                 <select class="form-select" id="carSelect" required>
@@ -28,59 +28,29 @@
                                 <label>Vehicle</label>
                             </div>
 
+                            <div class="form-floating mb-3">
+                                <select class="form-select" id="branchSelect" required>
+                                    <option value="" selected disabled>Select...</option>
+                                </select>
+                                <label>Branch</label>
+                            </div>
+
                             <div class="mb-4">
                                 <label class="form-label text-muted small">SELECT SERVICES</label>
-                                <div class="list-group service-list-group" id="serviceList">
-                                    
-                                    <label class="list-group-item d-flex gap-3 align-items-center">
-                                        <input class="form-check-input flex-shrink-0 service-checkbox" type="checkbox" value="1150" data-name="Periodic Maintenance" style="width: 1.5em; height: 1.5em;">
-                                        <div class="d-flex w-100 justify-content-between align-items-center service-info">
-                                            <div>
-                                                <h6 class="mb-0">Periodic Maintenance</h6>
-                                                <small class="text-muted">Oil, filter change & check-up</small>
-                                            </div>
-                                            <span class="service-price-tag">1150 $</span>
-                                        </div>
-                                    </label>
-
-                                    <label class="list-group-item d-flex gap-3 align-items-center">
-                                        <input class="form-check-input flex-shrink-0 service-checkbox" type="checkbox" value="1200" data-name="Brake System Maint." style="width: 1.5em; height: 1.5em;">
-                                        <div class="d-flex w-100 justify-content-between align-items-center service-info">
-                                            <div>
-                                                <h6 class="mb-0">Brake System</h6>
-                                                <small class="text-muted">Pad & disc check</small>
-                                            </div>
-                                            <span class="service-price-tag">1200 $</span>
-                                        </div>
-                                    </label>
-
-                                    <label class="list-group-item d-flex gap-3 align-items-center">
-                                        <input class="form-check-input flex-shrink-0 service-checkbox" type="checkbox" value="3000" data-name="Detailed Performance Test" style="width: 1.5em; height: 1.5em;">
-                                        <div class="d-flex w-100 justify-content-between align-items-center service-info">
-                                            <div>
-                                                <h6 class="mb-0">Performance Test</h6>
-                                                <small class="text-muted">Detailed dyno & engine test</small>
-                                            </div>
-                                            <span class="service-price-tag">3000 $</span>
-                                        </div>
-                                    </label>
-
-                                    <label class="list-group-item d-flex gap-3 align-items-center">
-                                        <input class="form-check-input flex-shrink-0 service-checkbox" type="checkbox" value="6000" data-name="Tire Change (4 Set)" style="width: 1.5em; height: 1.5em;">
-                                        <div class="d-flex w-100 justify-content-between align-items-center service-info">
-                                            <div>
-                                                <h6 class="mb-0">Tire Change</h6>
-                                                <small class="text-muted">4 tires + balancing</small>
-                                            </div>
-                                            <span class="service-price-tag">6000 $</span>
-                                        </div>
-                                    </label>
-                                </div>
+                                <div class="list-group service-list-group" id="serviceList" style="max-height: 26rem; overflow-y: auto;">
+                                    </div>
                             </div>
 
                             <div class="form-floating mb-3">
                                 <input type="date" class="form-control" id="dateInput" required>
                                 <label>Date</label>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <select class="form-select" id="timeSelect" required>
+                                    <option value="" selected disabled>Select a date first</option>
+                                </select>
+                                <label>Time</label>
                             </div>
 
                             <div class="form-floating mb-4">
@@ -91,7 +61,7 @@
                             <div class="d-flex justify-content-between align-items-center mb-4 p-3 border border-secondary rounded" style="background: rgba(255,255,255,0.05);">
                                 <div>
                                     <small class="text-muted d-block">ESTIMATED COST</small>
-                                    <span class="fw-bold fs-3 text-warning" id="priceDisplay">0 $</span>
+                                    <span class="fw-bold fs-3 text-warning" id="priceDisplay">0 ₺</span>
                                 </div>
                                 <i class="fa-solid fa-tag fa-2x text-muted"></i>
                             </div>
@@ -160,7 +130,7 @@
                     <p class="text-muted small">Please register your vehicle first.</p>
                 </div>
                 <div class="modal-footer border-top border-secondary justify-content-center">
-                    <button type="button" class="btn btn-primary px-4" onclick="redirectToAddVehicle()">
+                    <button type="button" class="btn btn-primary px-4" id="addVehicleRedirectBtn">
                         <i class="fa-solid fa-plus me-2"></i>ADD VEHICLE
                     </button>
                 </div>

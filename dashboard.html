@@ -49,7 +49,7 @@
                     </div>
 
                     <div class="p-4">
-                        <a href="#" onclick="checkCarsBeforeAppointment(event)" class="btn btn-primary w-100 py-3 fw-bold">
+                        <a href="appointment.html" id="bookServiceBtn" class="btn btn-primary w-100 py-3 fw-bold">
                             <i class="fa-solid fa-calendar-plus me-2"></i> BOOK SERVICE
                         </a>
                     </div>
@@ -106,9 +106,12 @@
                                 <option value="Bentley">Bentley</option>
                                 <option value="BMW">BMW</option>
                                 <option value="Bugatti">Bugatti</option>
+                                <option value="Chery">Chery</option>
                                 <option value="Chevrolet">Chevrolet</option>
-                                <option value="Citroën">Citroën</option>
+                                <option value="BYD">BYD</option>
+                                <option value="Citroen">Citroën</option>
                                 <option value="Cupra">Cupra</option>
+                                <option value="Dacia">Dacia</option>
                                 <option value="Dodge">Dodge</option>
                                 <option value="Ferrari">Ferrari</option>
                                 <option value="Fiat">Fiat</option>
@@ -123,7 +126,7 @@
                                 <option value="Maserati">Maserati</option>
                                 <option value="Mazda">Mazda</option>
                                 <option value="McLaren">McLaren</option>
-                                <option value="Mercedes">Mercedes</option>
+                                <option value="Mercedes-Benz">Mercedes</option>
                                 <option value="Nissan">Nissan</option>
                                 <option value="Opel">Opel</option>
                                 <option value="Peugeot">Peugeot</option>
@@ -134,6 +137,7 @@
                                 <option value="Skoda">Škoda</option>
                                 <option value="Subaru">Subaru</option>
                                 <option value="Tesla">Tesla</option>
+                                <option value="Togg">Togg</option>
                                 <option value="Toyota">Toyota</option>
                                 <option value="Volkswagen">Volkswagen</option>
                                 <option value="Volvo">Volvo</option>
@@ -147,7 +151,32 @@
                         </div>
                         <div class="form-floating mb-3">
                             <input type="text" class="form-control" id="newCarPlate" placeholder="Plate" required>
-                            <label>Plate (e.g. 12 ABC 345)</label>
+                            <label>Plate (e.g. 34 ABC 123)</label>
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <div class="form-floating">
+                                    <input type="number" class="form-control" id="newCarYear" placeholder="Year" min="1990" max="2027" required>
+                                    <label>Model Year</label>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-floating">
+                                    <select class="form-select" id="newCarFuel" required>
+                                        <option value="">Select...</option>
+                                        <option value="petrol">Petrol</option>
+                                        <option value="diesel">Diesel</option>
+                                        <option value="hybrid">Hybrid</option>
+                                        <option value="ev">Electric</option>
+                                        <option value="lpg">LPG</option>
+                                    </select>
+                                    <label>Fuel</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="number" class="form-control" id="newCarMileage" placeholder="Mileage" min="0" step="1">
+                            <label>Mileage in km (optional)</label>
                         </div>
                         <button type="submit" class="btn btn-primary w-100 py-3 mt-2">SAVE</button>
                     </form>
@@ -202,7 +231,7 @@
                     <p class="text-muted small">Please register your vehicle first.</p>
                 </div>
                 <div class="modal-footer border-top border-secondary justify-content-center">
-                    <button type="button" class="btn btn-primary px-4" onclick="redirectToAddVehicle()">
+                    <button type="button" class="btn btn-primary px-4" id="addVehicleRedirectBtn">
                         <i class="fa-solid fa-plus me-2"></i>ADD VEHICLE
                     </button>
                 </div>

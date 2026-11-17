@@ -35,7 +35,13 @@
                                 <label for="regPhone">Phone Number</label>
                             </div>
                             <div class="form-floating mb-3">
-                                <input type="password" class="form-control" id="regPassword" placeholder="Password" required>
+                                <select class="form-select" id="regCity" required>
+                                    <option value="" selected disabled>Select...</option>
+                                </select>
+                                <label for="regCity">City</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="password" class="form-control" id="regPassword" placeholder="Password" minlength="8" maxlength="72" required>
                                 <label for="regPassword">Password</label>
                             </div>
 

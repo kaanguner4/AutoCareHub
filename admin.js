@@ -1,19 +1,18 @@
-//const API_URL = 'http://localhost:3000/api';
+// Admin console. Uses API, esc(), formatTRY(), formatDate() and STATUS_LABELS from main.js (loaded first).
+// Branch admins see their own branch; the HQ admin sees all branches (the API enforces this).
 let isShowingCompleted = false;
 
-document.addEventListener('DOMContentLoaded', function() {
-    const user = JSON.parse(localStorage.getItem('currentUser'));
-    if (!user || user.email !== 'admin@pitstop.com') {
+document.addEventListener('DOMContentLoaded', async function() {
+    const user = await API.me();
+    if (!user || user.role !== 'admin') {
         alert("ACCESS DENIED: Admins only.");
         window.location.href = 'index.html';
         return;
     }
+    const scopeLabel = document.getElementById('adminScopeLabel');
+    if (scopeLabel) scopeLabel.textContent = user.branch ? `${user.name} · ${user.branch.name}` : `${user.name} · All branches`;
+
     renderAdminDashboard();
-    
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-        localStorage.removeItem('currentUser');
-        window.location.href = 'index.html';
-    });
 
     const toggleBtn = document.getElementById('toggleViewBtn');
     toggleBtn.addEventListener('click', function() {
@@ -28,101 +27,79 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         renderAdminDashboard();
     });
+
+    document.getElementById('adminTableBody').addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-action="set-status"]');
+        if (btn) updateStatus(btn.dataset.id, btn.dataset.status);
+    });
 });
 
 async function renderAdminDashboard() {
+    const tableBody = document.getElementById('adminTableBody');
     try {
-        const [appointmentsRes, usersRes] = await Promise.all([
-            fetch(`${API_URL}/appointments`),
-            fetch(`${API_URL}/users`)
+        const [stats, appointments] = await Promise.all([
+            apiFetch('/admin/stats'),
+            API.getAppointments(isShowingCompleted ? 'history' : 'active', 200)
         ]);
-        
-        const appointments = await appointmentsRes.json();
-        const users = await usersRes.json();
-        const tableBody = document.getElementById('adminTableBody');
-        
-        // Stats
-        let pendingCount = 0;
-        let completedCount = 0;
-        let totalRevenue = 0;
-        appointments.forEach(app => {
-            if (app.status === 'Pending') pendingCount++;
-            if (app.status === 'Completed') {
-                completedCount++;
-                totalRevenue += parseFloat(app.price || 0);
-            }
-        });
 
-        document.getElementById('statTotal').innerText = appointments.length;
-        document.getElementById('statPending').innerText = pendingCount;
-        document.getElementById('statCompleted').innerText = completedCount;
-        document.getElementById('statRevenue').innerText = totalRevenue.toLocaleString() + ' $';
+        document.getElementById('statTotal').innerText = stats.appointments_total.toLocaleString('tr-TR');
+        document.getElementById('statPending').innerText = stats.appointments_pending.toLocaleString('tr-TR');
+        document.getElementById('statCompleted').innerText = stats.appointments_completed.toLocaleString('tr-TR');
+        document.getElementById('statRevenue').innerText = formatTRY(stats.revenue_30d_try);
 
-        tableBody.innerHTML = '';
-        appointments.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-        let filteredList = isShowingCompleted ? 
-            appointments.filter(app => app.status === 'Completed') : 
-            appointments.filter(app => app.status !== 'Completed');
-
-        if (filteredList.length === 0) {
+        if (appointments.length === 0) {
             tableBody.innerHTML = `<tr><td colspan="8" class="text-center py-4 text-muted">No records found.</td></tr>`;
             return;
         }
 
-        filteredList.forEach(app => {
-            const customer = users.find(u => u.id === app.user_id);
-            const customerName = customer ? customer.name : 'Unknown User';
-            const carInfo = app.car_info || app.car;
-            const services = app.services || app.service;
-
+        tableBody.innerHTML = appointments.map(app => {
             let badgeClass = 'bg-secondary';
-            if (app.status === 'Pending') badgeClass = 'bg-warning text-dark';
-            if (app.status === 'Approved') badgeClass = 'bg-primary';
-            if (app.status === 'Completed') badgeClass = 'bg-success';
-            if (app.status === 'Cancelled') badgeClass = 'bg-danger';
-
-            const row = `
+            if (app.status === 'pending') badgeClass = 'bg-warning text-dark';
+            if (app.status === 'confirmed') badgeClass = 'bg-primary';
+            if (app.status === 'completed') badgeClass = 'bg-success';
+            if (app.status === 'cancelled') badgeClass = 'bg-danger';
+            const amount = app.amount_try === null ? '-' : formatTRY(app.amount_try);
+            return `
                 <tr>
-                    <td class="text-white">${new Date(app.date).toLocaleDateString()}</td>
-                    <td><div class="customer-name-highlight">${customerName}</div><small class="text-muted">ID: ${app.user_id}</small></td>
-                    <td>${carInfo}</td>
-                    <td><small>${services}</small></td>
-                    <td class="text-warning fw-bold">${app.price} $</td>
-                    <td><small>${app.note || '-'}</small></td>
-                    <td><span class="badge ${badgeClass} badge-status">${app.status}</span></td>
+                    <td class="text-white">${esc(formatDate(app.scheduled_for, true))}</td>
+                    <td><div class="customer-name-highlight">${esc(app.customer.name)}</div><small class="text-muted">${esc(app.branch.name)} · ${esc(app.channel)}</small></td>
+                    <td>${esc(`${app.vehicle.brand} ${app.vehicle.model}`)}<br><small class="text-muted">${esc(app.vehicle.plate)}</small></td>
+                    <td><small>${esc(app.services || '-')}</small></td>
+                    <td class="text-warning fw-bold">${esc(amount)}</td>
+                    <td><small>${esc(app.note || '-')}</small></td>
+                    <td><span class="badge ${badgeClass} badge-status">${esc(STATUS_LABELS[app.status] || app.status)}</span></td>
                     <td class="text-end">${getActionButtons(app.id, app.status)}</td>
                 </tr>`;
-            tableBody.innerHTML += row;
-        });
+        }).join('');
+    } catch (err) {
+        console.error(err);
+        if (err.status === 401 || err.status === 403) { window.location.href = 'index.html'; return; }
+        tableBody.innerHTML = `<tr><td colspan="8" class="text-center py-4 text-muted">${esc(err.message)}</td></tr>`;
+    }
+}
 
-    } catch (err) { console.error(err); }
+function statusButton(id, status, cls, content) {
+    return `<button class="btn btn-sm ${cls}" data-action="set-status" data-id="${esc(id)}" data-status="${status}">${content}</button>`;
 }
 
 function getActionButtons(id, status) {
-    if (status === 'Pending') {
-        return `<button class="btn btn-sm btn-outline-success" onclick="updateStatus(${id}, 'Approved')"><i class="fa-solid fa-check"></i></button>
-                <button class="btn btn-sm btn-outline-danger" onclick="updateStatus(${id}, 'Cancelled')"><i class="fa-solid fa-xmark"></i></button>`;
-    } else if (status === 'Approved') {
-        return `<button class="btn btn-sm btn-success" onclick="updateStatus(${id}, 'Completed')">Finish</button>`;
-    } else if (status === 'Cancelled' || status === 'Completed') {
-        return `<button class="btn btn-sm btn-outline-danger border-0" onclick="deleteAppointment(${id})"><i class="fa-solid fa-trash-can"></i></button>`;
+    if (status === 'pending') {
+        return statusButton(id, 'confirmed', 'btn-outline-success', '<i class="fa-solid fa-check"></i>') + ' ' +
+               statusButton(id, 'cancelled', 'btn-outline-danger', '<i class="fa-solid fa-xmark"></i>');
+    } else if (status === 'confirmed') {
+        return statusButton(id, 'completed', 'btn-success', 'Finish') + ' ' +
+               statusButton(id, 'no_show', 'btn-outline-secondary', 'No-show') + ' ' +
+               statusButton(id, 'cancelled', 'btn-outline-danger', '<i class="fa-solid fa-xmark"></i>');
     }
     return '-';
 }
 
-window.updateStatus = async function(id, newStatus) {
-    if(!confirm(`Change status to ${newStatus}?`)) return;
-    await fetch(`${API_URL}/appointments/${id}/status`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: newStatus })
-    });
+async function updateStatus(id, newStatus) {
+    if (!confirm(`Change status to ${STATUS_LABELS[newStatus] || newStatus}?`)) return;
+    try {
+        await API.setAppointmentStatus(id, newStatus);
+    } catch (err) {
+        showNotification(err.message, "error");
+    }
     renderAdminDashboard();
-};
-
-window.deleteAppointment = async function(id) {
-    if(!confirm(`Delete permanently?`)) return;
-    await fetch(`${API_URL}/appointments/${id}`, { method: 'DELETE' });
-    renderAdminDashboard();
-};
+}
