@@ -53,11 +53,11 @@ CREATE TABLE app_users (
     customer_id   bigint REFERENCES customers (id),
     employee_id   bigint REFERENCES employees (id),
     email         text NOT NULL UNIQUE CHECK (email LIKE '%_@_%'),
-    password_hash text NOT NULL CHECK (password_hash ~ '^\$2[aby]\$[0-9]{2}\$.{53}$'),
+    password_hash text CHECK (password_hash ~ '^\$2[aby]\$[0-9]{2}\$.{53}$'),
     role          text NOT NULL CHECK (role IN ('customer', 'admin')),
     created_at    timestamptz NOT NULL DEFAULT now(),
     CHECK ((role = 'customer' AND customer_id IS NOT NULL AND employee_id IS NULL)
-        OR (role = 'admin' AND employee_id IS NOT NULL AND customer_id IS NULL))
+        OR (role = 'admin' AND customer_id IS NULL))
 );
 
 CREATE TABLE vehicles (
@@ -132,6 +132,13 @@ CREATE TABLE appointments (
     status        text NOT NULL CHECK (status IN ('pending', 'confirmed', 'completed', 'cancelled', 'no_show')),
     note          text,
     CHECK (scheduled_for >= requested_at)
+);
+
+CREATE TABLE appointment_services (
+    appointment_id bigint NOT NULL REFERENCES appointments (id) ON DELETE CASCADE,
+    service_id     bigint NOT NULL REFERENCES service_catalog (id),
+    list_price_try numeric(12, 2) NOT NULL CHECK (list_price_try >= 0),
+    PRIMARY KEY (appointment_id, service_id)
 );
 
 CREATE TABLE work_orders (
@@ -271,6 +278,7 @@ CREATE INDEX appointments_vehicle_id_idx             ON appointments (vehicle_id
 CREATE INDEX appointments_branch_id_idx              ON appointments (branch_id);
 CREATE INDEX appointments_requested_at_idx           ON appointments (requested_at);
 CREATE INDEX appointments_scheduled_for_idx          ON appointments (scheduled_for);
+CREATE INDEX appointment_services_service_id_idx   ON appointment_services (service_id);
 CREATE INDEX work_orders_branch_id_idx               ON work_orders (branch_id);
 CREATE INDEX work_orders_vehicle_id_idx              ON work_orders (vehicle_id);
 CREATE INDEX work_orders_advisor_employee_id_idx     ON work_orders (advisor_employee_id);
@@ -339,12 +347,12 @@ COMMENT ON COLUMN customers.created_at IS 'When the customer record was created 
 COMMENT ON COLUMN customers.tax_no IS 'Tax number (VKN) of fleet customers; NULL for individuals. Synthetic, deliberately fails the VKN checksum.';
 COMMENT ON COLUMN customers.marketing_opt_in IS 'True if the customer agreed to receive marketing messages.';
 
-COMMENT ON TABLE app_users IS 'Web application logins: customers (own data only) and admins (branch staff).';
+COMMENT ON TABLE app_users IS 'Web application logins: customers (own data only), branch admins (own branch) and the head-office admin (all branches).';
 COMMENT ON COLUMN app_users.id IS 'Surrogate key of the login.';
 COMMENT ON COLUMN app_users.customer_id IS 'Customer this login belongs to (role customer); NULL for admins.';
-COMMENT ON COLUMN app_users.employee_id IS 'Employee this login belongs to (role admin); NULL for customers.';
+COMMENT ON COLUMN app_users.employee_id IS 'Branch employee this admin login belongs to (sees only that branch); NULL for customers and for the head-office admin, who sees all branches.';
 COMMENT ON COLUMN app_users.email IS 'Login e-mail address, unique.';
-COMMENT ON COLUMN app_users.password_hash IS 'bcrypt hash of the password; the password itself is never stored.';
+COMMENT ON COLUMN app_users.password_hash IS 'bcrypt hash of the password; the password itself is never stored. NULL = the login cannot sign in.';
 COMMENT ON COLUMN app_users.role IS 'Application role: customer or admin.';
 COMMENT ON COLUMN app_users.created_at IS 'When the login was created.';
 
@@ -404,6 +412,11 @@ COMMENT ON COLUMN appointments.scheduled_for IS 'Date and time the vehicle is ex
 COMMENT ON COLUMN appointments.channel IS 'Booking channel: web, phone, walk_in or fleet_portal.';
 COMMENT ON COLUMN appointments.status IS 'pending, confirmed, completed (vehicle came and a work order was opened), cancelled or no_show.';
 COMMENT ON COLUMN appointments.note IS 'Free-text note from the customer, in Turkish.';
+
+COMMENT ON TABLE appointment_services IS 'Services a customer selected when booking an appointment on the website (empty for bookings made by phone or at the counter).';
+COMMENT ON COLUMN appointment_services.appointment_id IS 'Appointment (appointments.id).';
+COMMENT ON COLUMN appointment_services.service_id IS 'Requested service (service_catalog.id).';
+COMMENT ON COLUMN appointment_services.list_price_try IS 'List price of the service in Turkish lira, excluding VAT, at booking time (estimate shown to the customer).';
 
 COMMENT ON TABLE work_orders IS 'Workshop jobs (iş emri): one per vehicle visit; most come from a completed appointment.';
 COMMENT ON COLUMN work_orders.id IS 'Surrogate key of the work order.';

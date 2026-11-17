@@ -1,0 +1,15 @@
+# Allowlist: the build context is the repo root, which also holds .env and seed data.
+*
+!backend/package.json
+!backend/package-lock.json
+!backend/src/
+!index.html
+!register.html
+!dashboard.html
+!appointment.html
+!admin.html
+!main.js
+!admin.js
+!style.css
+!admin.css
+!hero.svg

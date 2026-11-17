@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Appointment - Auto Care Hub</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Appointment - AutoCare Türkiye</title>
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="vendor/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -19,7 +19,7 @@
                         <p class="text-center text-muted small">Our expert technicians are waiting for your vehicle.</p>
                     </div>
                     <div class="card-body p-4">
-                        <form onsubmit="handleAppointment(event)" novalidate>
+                        <form id="appointmentForm" novalidate>
                             
                             <div class="form-floating mb-3">
                                 <select class="form-select" id="carSelect" required>
@@ -28,54 +28,17 @@
                                 <label>Vehicle</label>
                             </div>
 
+                            <div class="form-floating mb-3">
+                                <select class="form-select" id="branchSelect" required>
+                                    <option value="" selected disabled>Select...</option>
+                                </select>
+                                <label>Branch</label>
+                            </div>
+
                             <div class="mb-4">
                                 <label class="form-label text-muted small">SELECT SERVICES</label>
-                                <div class="list-group service-list-group" id="serviceList">
-                                    
-                                    <label class="list-group-item d-flex gap-3 align-items-center">
-                                        <input class="form-check-input flex-shrink-0 service-checkbox" type="checkbox" value="1150" data-name="Periodic Maintenance" style="width: 1.5em; height: 1.5em;">
-                                        <div class="d-flex w-100 justify-content-between align-items-center service-info">
-                                            <div>
-                                                <h6 class="mb-0">Periodic Maintenance</h6>
-                                                <small class="text-muted">Oil, filter change & check-up</small>
-                                            </div>
-                                            <span class="service-price-tag">1150 $</span>
-                                        </div>
-                                    </label>
-
-                                    <label class="list-group-item d-flex gap-3 align-items-center">
-                                        <input class="form-check-input flex-shrink-0 service-checkbox" type="checkbox" value="1200" data-name="Brake System Maint." style="width: 1.5em; height: 1.5em;">
-                                        <div class="d-flex w-100 justify-content-between align-items-center service-info">
-                                            <div>
-                                                <h6 class="mb-0">Brake System</h6>
-                                                <small class="text-muted">Pad & disc check</small>
-                                            </div>
-                                            <span class="service-price-tag">1200 $</span>
-                                        </div>
-                                    </label>
-
-                                    <label class="list-group-item d-flex gap-3 align-items-center">
-                                        <input class="form-check-input flex-shrink-0 service-checkbox" type="checkbox" value="3000" data-name="Detailed Performance Test" style="width: 1.5em; height: 1.5em;">
-                                        <div class="d-flex w-100 justify-content-between align-items-center service-info">
-                                            <div>
-                                                <h6 class="mb-0">Performance Test</h6>
-                                                <small class="text-muted">Detailed dyno & engine test</small>
-                                            </div>
-                                            <span class="service-price-tag">3000 $</span>
-                                        </div>
-                                    </label>
-
-                                    <label class="list-group-item d-flex gap-3 align-items-center">
-                                        <input class="form-check-input flex-shrink-0 service-checkbox" type="checkbox" value="6000" data-name="Tire Change (4 Set)" style="width: 1.5em; height: 1.5em;">
-                                        <div class="d-flex w-100 justify-content-between align-items-center service-info">
-                                            <div>
-                                                <h6 class="mb-0">Tire Change</h6>
-                                                <small class="text-muted">4 tires + balancing</small>
-                                            </div>
-                                            <span class="service-price-tag">6000 $</span>
-                                        </div>
-                                    </label>
-                                </div>
+                                <div class="u-scroll-list list-group service-list-group" id="serviceList">
+                                    </div>
                             </div>
 
                             <div class="form-floating mb-3">
@@ -83,15 +46,22 @@
                                 <label>Date</label>
                             </div>
 
+                            <div class="form-floating mb-3">
+                                <select class="form-select" id="timeSelect" required>
+                                    <option value="" selected disabled>Select a date first</option>
+                                </select>
+                                <label>Time</label>
+                            </div>
+
                             <div class="form-floating mb-4">
-                                <textarea class="form-control" placeholder="Note" id="noteInput" style="height: 100px"></textarea>
+                                <textarea class="u-h-100px form-control" placeholder="Note" id="noteInput"></textarea>
                                 <label>Note for Technician (Optional)</label>
                             </div>
 
-                            <div class="d-flex justify-content-between align-items-center mb-4 p-3 border border-secondary rounded" style="background: rgba(255,255,255,0.05);">
+                            <div class="u-bg-faint d-flex justify-content-between align-items-center mb-4 p-3 border border-secondary rounded">
                                 <div>
                                     <small class="text-muted d-block">ESTIMATED COST</small>
-                                    <span class="fw-bold fs-3 text-warning" id="priceDisplay">0 $</span>
+                                    <span class="fw-bold fs-3 text-warning" id="priceDisplay">0 ₺</span>
                                 </div>
                                 <i class="fa-solid fa-tag fa-2x text-muted"></i>
                             </div>
@@ -128,7 +98,7 @@
 
     <div class="modal fade" id="confirmationModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-secondary" style="background-color: #141414;">
+            <div class="u-bg-card modal-content border-secondary">
                 <div class="modal-header border-bottom border-secondary">
                     <h5 class="modal-title fw-bold text-white">
                         <i class="fa-solid fa-triangle-exclamation text-warning me-2"></i>CONFIRMATION REQUIRED
@@ -148,7 +118,7 @@
 
     <div class="modal fade" id="noCarsModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-secondary" style="background-color: #141414;">
+            <div class="u-bg-card modal-content border-secondary">
                 <div class="modal-header border-bottom border-secondary">
                     <h5 class="modal-title fw-bold text-white">
                         <i class="fa-solid fa-car-burst text-danger me-2"></i>NO VEHICLE FOUND
@@ -160,7 +130,7 @@
                     <p class="text-muted small">Please register your vehicle first.</p>
                 </div>
                 <div class="modal-footer border-top border-secondary justify-content-center">
-                    <button type="button" class="btn btn-primary px-4" onclick="redirectToAddVehicle()">
+                    <button type="button" class="btn btn-primary px-4" id="addVehicleRedirectBtn">
                         <i class="fa-solid fa-plus me-2"></i>ADD VEHICLE
                     </button>
                 </div>
@@ -168,19 +138,19 @@
         </div>
     </div>
 
-    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100">
+    <div class="u-z-toast toast-container position-fixed top-0 end-0 p-3">
         <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header border-bottom border-secondary" style="background-color: #1f1f1f; color: white;">
+            <div class="u-toast-head toast-header border-bottom border-secondary">
                 <i class="fa-solid fa-circle-info me-2" id="toastIcon"></i>
                 <strong class="me-auto" id="toastTitle">System Message</strong>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
             </div>
-            <div class="toast-body" id="toastMessage" style="background-color: #141414; color: #e0e0e0;">
+            <div class="u-toast-body toast-body" id="toastMessage">
             </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="main.js"></script>
 </body>
 </html>

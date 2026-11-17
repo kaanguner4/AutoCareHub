@@ -1,8 +1,30 @@
 {
+  "name": "autocarehub-backend",
+  "version": "2.0.0",
+  "private": true,
+  "description": "AutoCare Türkiye web app and API (Express + PostgreSQL)",
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test test/"
+  },
   "dependencies": {
-    "body-parser": "^2.2.1",
-    "cors": "^2.8.5",
-    "express": "^5.2.1",
-    "mysql2": "^3.15.3"
+    "@fontsource/poppins": "5.3.0",
+    "@fortawesome/fontawesome-free": "6.4.0",
+    "bcryptjs": "3.0.3",
+    "bootstrap": "5.3.0",
+    "cookie-parser": "1.4.7",
+    "cors": "2.8.6",
+    "express": "5.3.0",
+    "express-rate-limit": "8.7.4",
+    "helmet": "8.3.0",
+    "jsonwebtoken": "9.0.3",
+    "pg": "8.23.1"
+  },
+  "devDependencies": {
+    "supertest": "7.3.2"
   }
 }
